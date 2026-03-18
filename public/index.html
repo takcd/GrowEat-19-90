@@ -9,9 +9,118 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Fira+Code:wght@300..700&family=Geist+Mono:wght@100..900&family=Geist:wght@100..900&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Lora:ital,wght@0,400..700;1,400..700&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Outfit:wght@100..900&family=Oxanium:wght@200..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100..900;1,100..900&family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&family=Space+Grotesk:wght@300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&family=Oswald:wght@200..700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/assets/index-050B-Bi0.css">
+    <style>
+      .oferta-btn-wrapper {
+        display: flex;
+        justify-content: center;
+        padding: 12px 16px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+      .oferta-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        max-width: 400px;
+        padding: 10px 24px;
+        background-color: #ffffff;
+        color: #374151;
+        border: 1.5px solid #d1d5db;
+        border-radius: 9999px;
+        font-family: 'Inter', 'Poppins', sans-serif;
+        font-size: 15px;
+        font-weight: 500;
+        text-align: center;
+        cursor: pointer;
+        text-decoration: none;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        -webkit-font-smoothing: antialiased;
+      }
+      .oferta-btn:hover {
+        background-color: #f9fafb;
+        border-color: #9ca3af;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/assets/index-Bx5RwNnm.js"></script>
+    <script>
+      (function() {
+        var done = false;
+        var interval = setInterval(function() {
+          if (done || document.getElementById('oferta-btn-wrapper')) { clearInterval(interval); return; }
+
+          // Find the "ENVIO IMEDIATO" text node
+          var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+          var node, envioEl = null;
+          while ((node = walker.nextNode())) {
+            if (node.textContent.trim().indexOf('ENVIO IMEDIATO') === 0) {
+              envioEl = node.parentElement;
+              break;
+            }
+          }
+          if (!envioEl) return;
+
+          // Walk up 1 level to get the rounded container div that holds ENVIO IMEDIATO
+          var target = envioEl.parentElement || envioEl;
+
+          var wrapper = document.createElement('div');
+          wrapper.id = 'oferta-btn-wrapper';
+          wrapper.className = 'oferta-btn-wrapper';
+          var btn = document.createElement('a');
+          btn.className = 'oferta-btn';
+          btn.textContent = 'Não, quero continuar com o básico!';
+          btn.href = 'https://grow-eat-oferta2.vercel.app/';
+          btn.target = '_blank';
+          wrapper.appendChild(btn);
+
+          target.parentElement.insertBefore(wrapper, target);
+          done = true;
+          clearInterval(interval);
+        }, 100);
+      })();
+    </script>
+
+    <script>
+      (function() {
+        var done = false;
+        var interval = setInterval(function() {
+          if (done) { clearInterval(interval); return; }
+
+          // Find "PLANO COMPLETO" text node
+          var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+          var node, planoEl = null;
+          while ((node = walker.nextNode())) {
+            if (node.textContent.trim() === 'PLANO COMPLETO') {
+              planoEl = node.parentElement;
+              break;
+            }
+          }
+          if (!planoEl) return;
+
+          // Walk up to find the product card section (has rounded corners + dark bg)
+          var el = planoEl;
+          for (var i = 0; i < 6; i++) {
+            if (!el.parentElement) break;
+            el = el.parentElement;
+            // Stop when we find a container with rounded class (the product card)
+            if (el.className && typeof el.className === 'string' && el.className.indexOf('rounded') !== -1) {
+              break;
+            }
+          }
+
+          // Restore the card's own background; the outer section is 2 levels up (bg-[#f8f8f8] wrapper)
+          el.style.backgroundColor = '';
+          var outer = el.parentElement && el.parentElement.parentElement
+            ? el.parentElement.parentElement
+            : el.parentElement;
+          if (outer) outer.style.backgroundColor = '#8c8c8c';
+          done = true;
+          clearInterval(interval);
+        }, 100);
+      })();
+    </script>
   </body>
 </html>
